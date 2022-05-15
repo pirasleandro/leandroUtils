@@ -10,20 +10,24 @@ import com.github.pirasleandro.characters.Box;
 
 public class TablePrinter {
 
-    public enum Meta {
-        NULL,
-        LIGHT_HEADER,
-        HEAVY_HEADER,
-        DOUBLE_HEADER,
-        DOUBLE_DASHED_HEADER,
-        TRIPLE_DASHED_HEADER,
-        QUADRUPLE_DASHED_HEADER,
-        ROUNDED_CORNERS,
+    public enum LineType {
+        LIGHT,
+        HEAVY,
+        DOUBLE,
+        DOUBLE_DASHED,
+        TRIPLE_DASHED,
+        QUADRUPLE_DASHED
     }
     
-    public static <T> String build(T[][] input, Meta... metaArray) {
-        @SuppressWarnings("unused") // TODO
-        HashSet<Meta> meta = new HashSet<>(toCollection(metaArray));
+    /**
+     * Returns a String representing the input as a table. May be modified with meta data.
+     * @param <T> input type
+     * @param input 2D array containing the values that will be represented as a table
+     * @param meta {@code HashSet<Meta>} containing {@code Meta} values to modify the table
+     * @return the built string
+     * @see #build(Object[][])
+     */
+    public static <T> String build(T[][] input, LineType header, LineType border) {
         String[][] table = stringArrayOf(input);
         int[] minWidths = getMinWidths(table);
         String[] content = new String[table.length];
@@ -49,14 +53,25 @@ public class TablePrinter {
         );
     }
 
+    /**
+     * Returns a String representing the input as a table.
+     * @param <T> input type
+     * @param input 2D array containing the values that will be represented as a table
+     * @return the built string
+     * @apiNote all meta data will be set to {@code LineType.LIGHT}
+     * @see #build(Object[][], Meta...)
+     */
     public static <T> String build(T[][] input) {
-        return build(input, Meta.NULL);
+        return build(input, LineType.LIGHT, LineType.LIGHT);
     }
 
-    public static <T> void print(T[][] input, Meta... metaArray) {
-        System.out.println(build(input, metaArray));
-    }
-
+    /**
+     * Prints a String representing the input as a table.
+     * @param <T> input type
+     * @param input 2D array containing the values that will be represented as a table
+     * @apiNote all meta data will be set to {@code LineType.LIGHT}
+     * @see #build(Object[][])
+     */
     public static <T> void print(T[][] input) {
         System.out.println(build(input));
     }
@@ -86,6 +101,17 @@ public class TablePrinter {
         return output.toString();
     }
 
+    /**
+     * <p>Builds a single row of a table.</p>
+     * <p>structure: start + (space + content + space + divide)* + space + end</p>
+     * <p>*repeat for every element in {@code content}</p>
+     * @param start first string
+     * @param space string between values and start/divide/end
+     * @param content values represented in this row
+     * @param divide string between values
+     * @param end last string
+     * @return the built string
+     */
     public static String buildRow(String start, String space, ArrayList<String> content, String divide, String end) {
         String[] contentArray = new String[content.size()];
         for (int i = 0; i < content.size(); i++) {
@@ -94,6 +120,18 @@ public class TablePrinter {
         return buildRow(start, space, contentArray, divide, end);
     }
 
+    /**
+     * <p>Builds a single row of a table. Intended to be used to divide content rows.</p>
+     * <p>structure: start + (space + fill + space + divide)* + space + end</p>
+     * <p>*repeat {@code col} times</p>
+     * @param start first string
+     * @param space string between fill and start/divide/end
+     * @param fill string replacing the usual content
+     * @param divide string between fill strings
+     * @param end last string
+     * @param cols amount of columns
+     * @return the built string
+     */
     public static String buildRow(String start, String space, String fill, String divide, String end, int cols) {
         ArrayList<String> content = new ArrayList<>();
         for (int i = 0; i < cols; i++) {
@@ -102,6 +140,18 @@ public class TablePrinter {
         return buildRow(start, space, content, divide, end);
     }
 
+    public enum CharType {
+        V, H,
+        UL, UR, DL, DR,
+        UH, HD, VL, VR,
+        VH;
+    }
+
+    /**
+     * Calculates the min width needed for every column of a table to represent it properly
+     * @param table table whose columns min widths are needed
+     * @return {@code int[]} containing all min widths
+     */
     private static int[] getMinWidths(String[][] table) {
         int[] minWidths = new int[table[0].length];
         for (int i = 0; i < table[0].length; i++) {
@@ -114,6 +164,12 @@ public class TablePrinter {
         return minWidths;
     }
 
+    /**
+     * Converts any 2D array to a {@code String[][]}
+     * @param <T> type of input array
+     * @param array array that needs to be converted
+     * @return converted array
+     */
     public static <T> String[][] stringArrayOf(T[][] array) {
         int rows = array.length;
         int cols = array[0].length;
