@@ -2,8 +2,6 @@ package com.github.pirasleandro.characters;
 
 import java.util.HashMap;
 
-import javax.sound.sampled.Line;
-
 /**
  * collection of all boxdrawing characters
  * 
@@ -165,7 +163,7 @@ public class Box {
       QUADRUPLE_DASHED;
    }
 
-   private static final IllegalArgumentException doesntExist = new IllegalArgumentException("This character doesn't exist");
+   //private static final IllegalArgumentException doesntExist = new IllegalArgumentException("This character doesn't exist");
    public static String get(String id) {
       HashMap<String, String> chars = new HashMap<>();
       chars.put("h", h);       chars.put("lr", lr);     chars.put("H", H);       chars.put("LR", LR);

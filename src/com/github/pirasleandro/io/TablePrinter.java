@@ -1,11 +1,6 @@
 package com.github.pirasleandro.io;
 
-
-import static com.github.pirasleandro.tweaks.HashSetUtils.toCollection;
-
 import java.util.ArrayList;
-import java.util.HashSet;
-
 import com.github.pirasleandro.characters.Box;
 
 public class TablePrinter {
